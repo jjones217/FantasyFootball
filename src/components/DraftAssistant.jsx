@@ -137,18 +137,10 @@ export default function DraftAssistant({ league, user, onBack }) {
 
   if (picksQuery.data && draftQuery.data && playersQuery.data) {
     const draft = draftQuery.data;
-    // Find which slot belongs to our user
-    const mySlot = Object.entries(draft.slot_to_roster_id || {}).find(
-      ([, rosterId]) => {
-        const rosters = draft.draft_order || {};
-        return rosters[user.user_id] !== undefined
-          ? String(rosters[user.user_id]) === String(rosterId)
-          : false;
-      }
-    )?.[0];
-
-    // Find user's roster_id via draft_order
-    const myRosterId = draft.draft_order?.[user.user_id];
+    // draft_order maps user_id -> slot number
+    // slot_to_roster_id maps slot number -> roster_id
+    const mySlot = draft.draft_order?.[user.user_id];
+    const myRosterId = draft.slot_to_roster_id?.[mySlot];
 
     myPicks = picksQuery.data
       .filter((p) => String(p.roster_id) === String(myRosterId))
