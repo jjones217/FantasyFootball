@@ -146,12 +146,13 @@ export default function DraftAssistant({ league, user, onBack }) {
       .filter((p) => String(p.roster_id) === String(myRosterId))
       .map((p) => {
         const player = playersQuery.data[p.player_id] || {};
-        const adp = player.search_rank || null;
+        const position = player.position || '?';
+        const adp = (position === 'K' || position === 'DEF') ? null : (player.search_rank || null);
         const valueScore = gradePickValue(p.pick_no, adp);
         return {
           pickNumber: p.pick_no,
           name: `${player.first_name || ''} ${player.last_name || p.player_id}`.trim(),
-          position: player.position || '?',
+          position,
           team: player.team || '',
           adp,
           valueScore,
