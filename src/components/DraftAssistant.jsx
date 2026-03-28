@@ -142,12 +142,22 @@ export default function DraftAssistant({ league, user, onBack }) {
     const mySlot = draft.draft_order?.[user.user_id];
     const myRosterId = draft.slot_to_roster_id?.[mySlot];
 
+    const scoringType = draft.metadata?.scoring_type
+      || (league.scoring_settings?.rec === 1 ? 'ppr'
+        : league.scoring_settings?.rec === 0.5 ? 'half_ppr'
+        : 'std');
+
+    const adpField = scoringType === 'ppr' ? 'adp_ppr'
+      : scoringType === 'half_ppr' ? 'adp_half_ppr'
+      : 'adp_std';
+
     myPicks = picksQuery.data
       .filter((p) => String(p.roster_id) === String(myRosterId))
       .map((p) => {
         const player = playersQuery.data[p.player_id] || {};
         const position = player.position || '?';
-        const adp = (position === 'K' || position === 'DEF') ? null : (player.search_rank || null);
+        const adp = (position === 'K' || position === 'DEF') ? null
+          : (player[adpField] || player.adp_ppr || player.adp_std || null);
         const valueScore = gradePickValue(p.pick_no, adp);
         return {
           pickNumber: p.pick_no,
@@ -186,7 +196,14 @@ export default function DraftAssistant({ league, user, onBack }) {
 
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-white">{league.name}</h1>
-        <p className="text-slate-400 text-sm">Draft Assistant · {user.display_name}</p>
+        <p className="text-slate-400 text-sm">
+          Draft Assistant · {user.display_name}
+          {draftQuery.data && (
+            <span className="ml-2 text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded">
+              {(draftQuery.data.metadata?.scoring_type || 'std').toUpperCase()} ADP
+            </span>
+          )}
+        </p>
       </div>
 
       {isLoading && (
