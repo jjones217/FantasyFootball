@@ -156,8 +156,12 @@ export default function DraftAssistant({ league, user, onBack }) {
       .map((p) => {
         const player = playersQuery.data[p.player_id] || {};
         const position = player.position || '?';
-        const adp = (position === 'K' || position === 'DEF') ? null
-          : (player[adpField] || player.adp_ppr || player.adp_std || null);
+        const adpFallback = scoringType === 'ppr'
+          ? (player.adp_ppr || player.adp_half_ppr || player.adp_std)
+          : scoringType === 'half_ppr'
+          ? (player.adp_half_ppr || player.adp_std || player.adp_ppr)
+          : (player.adp_std || player.adp_half_ppr || player.adp_ppr);
+        const adp = (position === 'K' || position === 'DEF') ? null : (adpFallback || null);
         const valueScore = gradePickValue(p.pick_no, adp);
         return {
           pickNumber: p.pick_no,
