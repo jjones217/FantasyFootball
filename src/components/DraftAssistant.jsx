@@ -196,13 +196,13 @@ export default function DraftAssistant({ league, user, onBack }) {
 
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-white">{league.name}</h1>
-        <p className="text-slate-400 text-sm">
+        <p className="text-slate-400 text-sm flex items-center gap-2">
           Draft Assistant · {user.display_name}
-          {draftQuery.data && (
-            <span className="ml-2 text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded">
-              {(draftQuery.data.metadata?.scoring_type || 'std').toUpperCase()} ADP
-            </span>
-          )}
+          <span className="text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded">
+            {draftQuery.data
+              ? `${(draftQuery.data.metadata?.scoring_type || 'std').toUpperCase()} ADP`
+              : '...'}
+          </span>
         </p>
       </div>
 
