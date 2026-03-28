@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getUser, getLeagues } from '../api/sleeper';
 
-const CURRENT_SEASON = '2024';
+const CURRENT_SEASON = '2025';
 
 export default function UserLookup({ onLeagueSelect }) {
   const [input, setInput] = useState('');
